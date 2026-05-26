@@ -53,7 +53,7 @@ export async function rankTracker(keyword, targetDomain) {
                 let a = h3.closest("a");
                 if (!a) {
                   let p = h3.parentElement;
-                  for (let j = 0; j < 5 && p; j++, p = p.parentElement) {
+                    for (let j = 0; j < 5 && p; j++, p = p.parentElement) {
                     if (p.tagName === "A") {
                       a = p;
                       break;
@@ -76,8 +76,8 @@ export async function rankTracker(keyword, targetDomain) {
                 let s = "",
                   c = a.parentElement;
 
-                for (let j = 0; j < 6 && j++; c = c.parentElement) {
-                  const txt = c.innerText || "";
+                for (let j = 0; j < 6 && c; j++, c = c.parentElement) {
+                  const txt = c && c.innerText ? c.innerText : "";
                   if (txt.length > h3.innerText.length + 50) {
                     s = (
                       txt
@@ -95,7 +95,7 @@ export async function rankTracker(keyword, targetDomain) {
                 }
                 return {
                   url: a.href,
-                  domaiin: new URL(a.href).hostname.replace("www.", ""),
+                  domain: new URL(a.href).hostname.replace("www.", ""),
                   title: h3.innerText.trim(),
                   snippet: s,
                 };
@@ -119,8 +119,8 @@ export async function rankTracker(keyword, targetDomain) {
         allResults.push(r);
         if (
           !found &&
-          (r.domain.toLowerCase().includes(cleanTarget) ||
-            cleanTarget.includes(r.domain.toLowerCase()))
+          (r.domain && r.domain.toLowerCase().includes(cleanTarget)) ||
+          (r.domain && cleanTarget.includes(r.domain.toLowerCase()))
         ) {
           found = { ...r, page: gPage + 1 };
         }
@@ -152,9 +152,9 @@ export async function rankTracker(keyword, targetDomain) {
         totalResultsScanned: allResults.length,
       },
     };
-  } catch (error) {
-    console.error("Rank check error: ", error, message);
-    if (browser) await browser.close().catch(() => {});
-    return { success: false, error: error.message };
-  }
+    } catch (error) {
+      console.error("Rank check error:", error?.message || error);
+      if (browser) await browser.close().catch(() => {});
+      return { success: false, error: error?.message || String(error) };
+    }
 }
