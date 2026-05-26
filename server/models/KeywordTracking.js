@@ -53,9 +53,9 @@ keywordTrackingSchema.index(
   { unique: true },
 );
 
-const keywordTracking = mongoose.model(
+const KeywordTracking = mongoose.model(
   "KeywordTracking",
   keywordTrackingSchema,
 );
 
-export default keywordTracking;
+export default KeywordTracking;
