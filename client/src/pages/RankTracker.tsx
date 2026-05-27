@@ -20,7 +20,6 @@ import {
   EyeOff,
   Filter,
   ArrowUpDown,
-  Pi,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
