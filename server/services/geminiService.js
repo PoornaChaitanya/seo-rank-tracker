@@ -123,7 +123,7 @@ export async function analyzeSeoData(scrapedData) {
 
     const analysis = JSON.parse(response.text);
 
-    return { success: true, date: analysis };
+    return { success: true, data: analysis };
   } catch (error) {
     console.error("Gemini analysis error:", error.message);
     return { success: false, error: error.message };

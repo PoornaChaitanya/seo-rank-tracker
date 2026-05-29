@@ -68,7 +68,7 @@ export default function Analyze() {
                     if(analysis.status === "completed"){
                         if(pollRef.current) clearInterval(pollRef.current)
                             setCurrentStep(3);
-                        setTimeout(()=>navigate(`1/report/${id}`),1000)
+                        setTimeout(()=>navigate(`/report/${id}`), 1000);
                     }else if(analysis.status === "failed"){
                         if(pollRef.current) clearInterval(pollRef.current)
                             setError("Analysis failed. The AI model might be down");

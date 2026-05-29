@@ -13,7 +13,7 @@ export async function scrapeUrl(url) {
     });
     browser = await chromium.connectOverCDP(session.connectUrl);
     const defaultContext = browser.contexts()[0];
-    const page = defaultContext.page()[0];
+    const page = defaultContext.pages()[0];
     page.setDefaultNavigationTimeout(3000);
 
     const startTime = Date.now();
@@ -33,9 +33,9 @@ export async function scrapeUrl(url) {
     const scrapedData = await page.evaluate(() => {
       const getMeta = (name) => {
         const el =
-          document.querySelector(`meta[name="${name}]`) ||
+          document.querySelector(`meta[name="${name}"]`) ||
           document.querySelector(`meta[property="${name}"]`);
-        return el ? el.getAtrribute("content") || "" : "";
+        return el ? el.getAttribute("content") || "" : "";
       };
 
       const title = document.title || "";
@@ -53,7 +53,7 @@ export async function scrapeUrl(url) {
         ? charsetMeta.getAttribute("charset") || ""
         : "";
 
-      const h1Elements = document.querySelector("h1");
+      const h1Elements = document.querySelectorAll("h1");
       const h1Texts = Array.from(h1Elements).map(
         (el) => el.textContent?.trim() || "",
       );
@@ -75,7 +75,7 @@ export async function scrapeUrl(url) {
         try {
           const href = link.href;
           if (href.startsWith("mailto:") || href.startsWith("tel:")) return;
-          const linkUrl = new url(href);
+          const linkUrl = new URL(href);
           if (linkUrl.hostname === currentHost) {
             internalLinks++;
           } else {
@@ -116,7 +116,7 @@ export async function scrapeUrl(url) {
         },
         images: {
           total: allImages.length,
-          misssingAlt,
+          missingAlt: misssingAlt,
           withAlt: allImages.length - misssingAlt,
         },
         wordCount,
@@ -142,5 +142,6 @@ export async function scrapeUrl(url) {
         console.error("[SCRAPER] Browser close failed:", error.message);
       }
     }
+    return { success: false, error: error.message };
   }
 }

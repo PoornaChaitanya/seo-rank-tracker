@@ -55,18 +55,20 @@ export const analyzeUrl = async (req, res) => {
         return;
       }
 
+      const aiData = aiResult.data || {};
+
       // 3. Save results
-      analysis.overallScore = aiResult.data.overallScore || 0;
-      analysis.categories = aiResult.data.categories || {};
-      analysis.metaData = aiResult.data.meta || {};
-      analysis.headings = aiResult.data.headings || {};
-      analysis.links = aiResult.data.links || {};
-      analysis.images = aiResult.data.images || {};
-      analysis.keywords = aiResult.data.keywords || [];
-      analysis.issues = aiResult.data.issues || [];
-      analysis.loadTime = aiResult.data.loadTime || 0;
-      analysis.pageSize = aiResult.data.pageSize || 0;
-      analysis.wordCount = aiResult.data.wordCount || 0;
+      analysis.overallScore = aiData.overallScore || 0;
+      analysis.categories = aiData.categories || {};
+      analysis.metaData = scrapeResult.data.metaData || {};
+      analysis.headings = scrapeResult.data.headings || {};
+      analysis.links = scrapeResult.data.links || {};
+      analysis.images = scrapeResult.data.images || {};
+      analysis.keywords = aiData.keywords || [];
+      analysis.issues = aiData.issues || [];
+      analysis.loadTime = scrapeResult.data.loadTime || 0;
+      analysis.pageSize = scrapeResult.data.pageSize || 0;
+      analysis.wordCount = scrapeResult.data.wordCount || 0;
       analysis.status = "completed";
 
       await analysis.save();
@@ -81,7 +83,7 @@ export const analyzeUrl = async (req, res) => {
     }
   } catch (error) {
     console.error("Analyze URL error:", error.message);
-    if (!res.headerSent) {
+    if (!res.headersSent) {
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -92,7 +94,7 @@ export const getAnalysis = async (req, res) => {
   try {
     const analysis = await Analysis.findOne({
       _id: req.params.id,
-      userId: req.UserId,
+      userId: req.userId,
     });
 
     if (!analysis)
@@ -138,7 +140,7 @@ export const deleteAnaylsis = async (req, res) => {
   try {
     await Analysis.findOneAndDelete({
       _id: req.params.id,
-      userId: req.UserId,
+      userId: req.userId,
     });
 
     res.json({ success: true, message: "Analysis deleted" });
