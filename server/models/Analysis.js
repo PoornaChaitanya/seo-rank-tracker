@@ -24,10 +24,10 @@ const analysisSchema = new mongoose.Schema(
     url: { type: String, required: true },
     overallScore: { type: Number, min: 0, max: 100, default: 0 },
     categories: {
-      seo: { tyoe: Number, default: 0 },
-      performance: { tyoe: Number, default: 0 },
-      accessibility: { tyoe: Number, default: 0 },
-      bestPractices: { tyoe: Number, default: 0 },
+      seo: { type: Number, default: 0 },
+      performance: { type: Number, default: 0 },
+      accessibility: { type: Number, default: 0 },
+      bestPractices: { type: Number, default: 0 },
     },
     metaData: {
       title: { type: String, default: "" },
