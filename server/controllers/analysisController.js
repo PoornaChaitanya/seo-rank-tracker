@@ -1,4 +1,5 @@
 import Analysis from "../models/Analysis.js";
+import { analyzeSeoData } from "../services/geminiService.js";
 import { scrapeUrl } from "../services/scraperService.js";
 
 // Analyze a URL
@@ -46,6 +47,29 @@ export const analyzeUrl = async (req, res) => {
       }
 
       // 2. Analyze with Gemini AI
+      const aiResult = await analyzeSeoData(scrapeResult.data);
+
+      if (!aiResult.success) {
+        analysis.status = "failed";
+        await analysis.save();
+        return;
+      }
+
+      // 3. Save results
+      analysis.overallScore = aiResult.data.overallScore || 0;
+      analysis.categories = aiResult.data.categories || {};
+      analysis.metaData = aiResult.data.meta || {};
+      analysis.headings = aiResult.data.headings || {};
+      analysis.links = aiResult.data.links || {};
+      analysis.images = aiResult.data.images || {};
+      analysis.keywords = aiResult.data.keywords || [];
+      analysis.issues = aiResult.data.issues || [];
+      analysis.loadTime = aiResult.data.loadTime || 0;
+      analysis.pageSize = aiResult.data.pageSize || 0;
+      analysis.wordCount = aiResult.data.wordCount || 0;
+      analysis.status = "completed";
+
+      await analysis.save();
     } catch (bgError) {
       console.error("Background analysis error:", bgError.message);
       try {
