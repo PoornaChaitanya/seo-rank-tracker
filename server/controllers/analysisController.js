@@ -116,8 +116,8 @@ export const getAnaylses = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const analyses = await (await Analysis.find({ userId: req.userId }))
-      .toSorted({ createdAt: -1 })
+    const analyses = await Analysis.find({ userId: req.userId })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .select("-issues -keywords");
